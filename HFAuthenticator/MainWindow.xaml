@@ -30,10 +30,13 @@
                     <ui:SettingsExpander.Items>
                         <ui:SettingsCard ContentAlignment="Vertical">
                             <ikw:SimpleStackPanel Spacing="8">
-                                <TextBox x:Name="UsernameTextBox" ui:ControlHelper.PlaceholderText="用户名"/>
-                                <PasswordBox x:Name="Password" ui:ControlHelper.PlaceholderText="密码"/>
-                                <Slider x:Name="RequestFrequencySlider" ui:ControlHelper.Header="登录频率（秒）" Maximum="3600" 
-                                        TickFrequency="10" SmallChange="10" Value="600" Width="200" Minimum="120" IsMoveToPointEnabled="True"/>
+                                <TextBox x:Name="UsernameTextBox" ui:ControlHelper.Header="用户名" ui:ControlHelper.PlaceholderText="点击输入文本"/>
+                                <PasswordBox x:Name="Password" ui:ControlHelper.Header="密码" ui:ControlHelper.PlaceholderText="点击输入文本"/>
+                                <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="15">
+                                    <Slider x:Name="RequestFrequencySlider" ui:ControlHelper.Header="登录频率（秒）" Maximum="7200" 
+                                        TickFrequency="10" SmallChange="10" Value="600" Width="200" Minimum="120" ValueChanged="RequestFrequencySlider_ValueChanged" IsMoveToPointEnabled="True"/>
+                                    <TextBlock x:Name="RequestFrequencyLabel" Text="" VerticalAlignment="Bottom" Margin="0, 0, 0, 10"/>
+                                </ikw:SimpleStackPanel>
                                 <Button x:Name="SaveButton" Click="SaveButton_Click" Content="保存设置" />
                             </ikw:SimpleStackPanel>
                         </ui:SettingsCard>

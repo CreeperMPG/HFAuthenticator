@@ -34,6 +34,7 @@ namespace HFAuthenticator
         private int _autoLoginRunning = 0; // 0 not running, 1 running
         private readonly string _logPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "HFAuthenticator", "autolog.log");
         private bool _suppressToggleEvent = false;
+        private bool _suppressFrequencySliderEvent = true;
 
         // Track last and next run times
         private DateTime? _lastAutoLoginTime = null;
@@ -42,11 +43,20 @@ namespace HFAuthenticator
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += (s, e) =>
+            {
+                _suppressFrequencySliderEvent = false;
+                UpdateRequestFrequencySliderLabel();
+            };
             AppendLog("Initializing MainWindow");
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
 
             UpdateLog.Text = "HF Authenticator Version 1.1.0 By -Windows-11-\n" +
                 "一个用于自动登录 HFBZ 上网认证系统的应用\n\n" +
+                "1.1.0  2026-03-21 00:15\n" +
+                "\t1. 添加登录间隔配置，将固定的10分钟改为2分钟~2小时自由配置\n" +
+                "\t2. 修改 UI，添加上次登录、下次登录时间显示\n" +
+                "\t3. 添加热点功能，支持操控系统热点启停并可以设置打开应用时自动启动系统热点\n\n" +
                 "1.0.0  2026-01-07 00:06\n" +
                 "\t1. 添加基础登录功能\n" +
                 "\t2. 添加用户名、密码、自动登录、IP配置\n";
@@ -70,7 +80,7 @@ namespace HFAuthenticator
                     {
                         Task.Run(async () => {
                             await HotspotUtils.TurnOnHotspotAsync();
-                            Dispatcher.Invoke(() => InitializeHotspotToggleAsync());
+                            await Dispatcher.Invoke(() => InitializeHotspotToggleAsync());
                         });
 
                     }
@@ -390,6 +400,36 @@ namespace HFAuthenticator
             if (_config == null) _config = new Utils.ConfigManager.AppConfig();
             _config.AutoHotspot = isOn;
             Utils.ConfigManager.Save(_config);
+        }
+        private void UpdateRequestFrequencySliderLabel()
+        {
+            double durationSecond = RequestFrequencySlider.Value;
+            // 转换为中文时分秒格式
+            TimeSpan timeSpan = TimeSpan.FromSeconds(durationSecond);
+            string timeStr = "";
+            if (timeSpan.Hours > 0)
+            {
+                timeStr += $"{timeSpan.Hours} 小时 ";
+            }
+            if (timeSpan.Minutes > 0)
+            {
+                timeStr += $"{timeSpan.Minutes} 分钟 ";
+            }
+            if (timeSpan.Seconds > 0 || timeStr == "")
+            {
+                timeStr += $"{timeSpan.Seconds} 秒 ";
+            }
+            try
+            {
+                RequestFrequencyLabel.Text = $"{timeStr} (={(int)durationSecond}s)";
+            }
+            catch { }
+        }
+
+        private void RequestFrequencySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_suppressFrequencySliderEvent) return;
+            UpdateRequestFrequencySliderLabel();
         }
     }
 }
