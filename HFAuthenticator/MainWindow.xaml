@@ -1,0 +1,80 @@
+﻿<Window x:Class="HFAuthenticator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HFAuthenticator"
+        xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
+        xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:WindowHelper.SystemBackdropType="Mica"
+        ui:TitleBar.Height="36"
+        mc:Ignorable="d"
+        Title="HF Authenticator" Height="720" Width="1200" Closing="Window_Closing">
+    <ui:ScrollViewerEx>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ikw:SimpleStackPanel Grid.Row="0" VerticalAlignment="Center" Spacing="10" Width="340" HorizontalAlignment="Center">
+                <ui:ToggleSwitch x:Name="AutoLoginToggle" Toggled="AutoLoginToggle_Toggled" Header="自动登录上网认证系统" Width="180" Margin="2" HorizontalAlignment="Center" />
+                <Button x:Name="ViewLogButton" Click="ViewLogButton_Click" Content="查看日志" Width="120" Height="34" Margin="2" HorizontalAlignment="Center" />
+                <TextBlock x:Name="TimeInfo"/>
+            </ikw:SimpleStackPanel>
+            <ikw:SimpleStackPanel Grid.Row="2" Spacing="10" Margin="20" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                <ui:SettingsExpander Header="设置" Description="应用设置">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.Settings_20_Regular}" />
+                    </ui:SettingsExpander.HeaderIcon>
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard ContentAlignment="Vertical">
+                            <ikw:SimpleStackPanel Spacing="8">
+                                <TextBox x:Name="UsernameTextBox" ui:ControlHelper.PlaceholderText="用户名"/>
+                                <PasswordBox x:Name="Password" ui:ControlHelper.PlaceholderText="密码"/>
+                                <Slider x:Name="RequestFrequencySlider" ui:ControlHelper.Header="登录频率（秒）" Maximum="3600" 
+                                        TickFrequency="10" SmallChange="10" Value="600" Width="200" Minimum="120" IsMoveToPointEnabled="True"/>
+                                <Button x:Name="SaveButton" Click="SaveButton_Click" Content="保存设置" />
+                            </ikw:SimpleStackPanel>
+                        </ui:SettingsCard>
+                        <ui:SettingsCard ContentAlignment="Left">
+                            <ui:SettingsExpander Header="高级设置" Description="修改此处设置后也需点击“保存设置”按钮保存">
+                                <ui:SettingsExpander.HeaderIcon>
+                                    <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.BuildingFactory_16_Regular}" />
+                                </ui:SettingsExpander.HeaderIcon>
+                                <ui:SettingsExpander.Items>
+                                    <ui:SettingsCard ContentAlignment="Vertical">
+                                        <TextBox x:Name="IPEndpointBox" ui:ControlHelper.Header="认证系统 IP 地址" Text="172.16.255.2"/>
+                                    </ui:SettingsCard>
+                                </ui:SettingsExpander.Items>
+                            </ui:SettingsExpander>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
+                <ui:SettingsExpander Header="热点设置">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.Wifi1_20_Regular}" />
+                    </ui:SettingsExpander.HeaderIcon>
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard ContentAlignment="Vertical">
+                            <ToggleButton x:Name="HotSpotToggle" Checked="HotSpotToggle_Checked" Unchecked="HotSpotToggle_Unchecked" Content="打开热点" Width="120" Height="34" Margin="2" HorizontalAlignment="Center" />
+                        </ui:SettingsCard>
+                        <ui:SettingsCard Header="开启应用时自动打开热点">
+                            <ui:ToggleSwitch x:Name="AutoHotSpotToggleSwitch" Toggled="AutoHotSpotToggleSwitch_Toggled" HorizontalAlignment="Center" />
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
+                <ui:SettingsExpander Header="关于">
+                    <ui:SettingsExpander.HeaderIcon>
+                        <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.Info_20_Regular}" />
+                    </ui:SettingsExpander.HeaderIcon>
+                    <ui:SettingsExpander.Items>
+                        <ui:SettingsCard ContentAlignment="Vertical">
+                            <TextBlock x:Name="UpdateLog"/>
+                        </ui:SettingsCard>
+                    </ui:SettingsExpander.Items>
+                </ui:SettingsExpander>
+            </ikw:SimpleStackPanel>
+        </Grid>
+    </ui:ScrollViewerEx>
+</Window>
