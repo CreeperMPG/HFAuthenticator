@@ -103,12 +103,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ILoginServiceProvider.cs" />
     <Compile Include="LogDialog.xaml.cs">
       <DependentUpon>LogDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\BZLogin.cs" />
     <Compile Include="Utils\ConfigManager.cs" />
     <Compile Include="Utils\HotspotUtils.cs" />
-    <Compile Include="Utils\Login.cs" />
+    <Compile Include="Utils\HFLogin.cs" />
     <Compile Include="Utils\RC4Encryptor.cs" />
     <Page Include="LogDialog.xaml">
       <SubType>Designer</SubType>

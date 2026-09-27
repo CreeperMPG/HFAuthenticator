@@ -22,6 +22,7 @@ namespace HFAuthenticator.Utils
             // Whether auto-login toggle should be on when app starts
             public bool AutoStart { get; set; }
             public bool AutoHotspot { get; set; } = false;
+            public string LoginType { get; set; } = "HF";
         }
 
         public static AppConfig Load()
@@ -71,7 +72,7 @@ namespace HFAuthenticator.Utils
         {
             return new AppConfig
             {
-                IPEndpoint = "172.16.255.2",
+                IPEndpoint = "",
                 RememberPwd = true,
                 Username = string.Empty,
                 Password = string.Empty,
@@ -79,6 +80,7 @@ namespace HFAuthenticator.Utils
                 RequestFrequency = 600,
                 AutoStart = false,
                 AutoHotspot = false,
+                LoginType = "HF"
             };
         }
     }

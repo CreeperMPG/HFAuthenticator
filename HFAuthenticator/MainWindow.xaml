@@ -34,9 +34,13 @@
                                 <PasswordBox x:Name="Password" ui:ControlHelper.Header="密码" ui:ControlHelper.PlaceholderText="点击输入文本"/>
                                 <ikw:SimpleStackPanel Orientation="Horizontal" Spacing="15">
                                     <Slider x:Name="RequestFrequencySlider" ui:ControlHelper.Header="登录频率（秒）" Maximum="7200" 
-                                        TickFrequency="10" SmallChange="10" Value="600" Width="200" Minimum="120" ValueChanged="RequestFrequencySlider_ValueChanged" IsMoveToPointEnabled="True"/>
+                                        TickFrequency="10" SmallChange="10" Value="600" Width="400" Minimum="120" ValueChanged="RequestFrequencySlider_ValueChanged" IsMoveToPointEnabled="True"/>
                                     <TextBlock x:Name="RequestFrequencyLabel" Text="" VerticalAlignment="Bottom" Margin="0, 0, 0, 10"/>
                                 </ikw:SimpleStackPanel>
+                                <ui:RadioButtons Header="选择登录配置（重启后生效）" Name="ServiceSelector">
+                                    <RadioButton Content="HF"/>
+                                    <RadioButton Content="BZ"/>
+                                </ui:RadioButtons>
                                 <Button x:Name="SaveButton" Click="SaveButton_Click" Content="保存设置" />
                             </ikw:SimpleStackPanel>
                         </ui:SettingsCard>
@@ -47,7 +51,7 @@
                                 </ui:SettingsExpander.HeaderIcon>
                                 <ui:SettingsExpander.Items>
                                     <ui:SettingsCard ContentAlignment="Vertical">
-                                        <TextBox x:Name="IPEndpointBox" ui:ControlHelper.Header="认证系统 IP 地址" Text="172.16.255.2"/>
+                                        <TextBox x:Name="IPEndpointBox" ui:ControlHelper.Header="认证系统 IP 地址" ui:ControlHelper.PlaceholderText="留空默认"/>
                                     </ui:SettingsCard>
                                 </ui:SettingsExpander.Items>
                             </ui:SettingsExpander>

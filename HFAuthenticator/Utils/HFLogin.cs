@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace HFAuthenticator.Utils
 {
-    internal class Login
+    internal class HFLogin : ILoginServiceProvider
     {
-        private readonly HttpClient _httpClient;
+        private HttpClient _httpClient;
 
-        public Login(HttpClient httpClient, Uri baseAddress)
+        public void SetConfig(HttpClient httpClient, Uri baseAddress)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             try
             {
-                _httpClient.BaseAddress = baseAddress;
+                _httpClient.BaseAddress = baseAddress == null ? new Uri("http://172.16.255.2") : baseAddress;
             }
             catch { }
         }

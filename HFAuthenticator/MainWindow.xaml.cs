@@ -27,7 +27,7 @@ namespace HFAuthenticator
     public partial class MainWindow : Window
     {
         private HttpClient _httpClient = new HttpClient();
-        private Login _loginService;
+        private ILoginServiceProvider _loginService;
         private Utils.ConfigManager.AppConfig _config;
 
         private System.Timers.Timer _autoLoginTimer;
@@ -51,8 +51,11 @@ namespace HFAuthenticator
             AppendLog("Initializing MainWindow");
             _httpClient.Timeout = TimeSpan.FromSeconds(30);
 
-            UpdateLog.Text = "HF Authenticator Version 1.1.0 By -Windows-11-\n" +
-                "一个用于自动登录 HFBZ 上网认证系统的应用\n\n" +
+            UpdateLog.Text = "HF Authenticator Version 1.2.0 By CreeperMPG\n" +
+                "一个用于自动登录 HFBZ/CQBZ 上网认证系统的应用\n\n" +
+                "1.2.0  2026-09-27 14:31\n" +
+                "\t1. 添加登录配置选项，可以选择登录 HFBZ 或 CQBZ\n" +
+                "\t2. 现在 IP 为空时会使用默认 IP\n" +
                 "1.1.0  2026-03-21 00:15\n" +
                 "\t1. 添加登录间隔配置，将固定的10分钟改为2分钟~2小时自由配置\n" +
                 "\t2. 修改 UI，添加上次登录、下次登录时间显示\n" +
@@ -78,13 +81,24 @@ namespace HFAuthenticator
                     AutoHotSpotToggleSwitch.IsOn = _config.AutoHotspot;
                     if (_config.AutoHotspot)
                     {
-                        Task.Run(async () => {
+                        Task.Run(async () =>
+                        {
                             await HotspotUtils.TurnOnHotspotAsync();
                             await Dispatcher.Invoke(() => InitializeHotspotToggleAsync());
                         });
 
                     }
                     _suppressToggleEvent = false;
+                    if (_config.LoginType == "HF")
+                    {
+                        _loginService = new HFLogin();
+                        ServiceSelector.SelectedIndex = 0;
+                    }
+                    else
+                    {
+                        _loginService = new BZLogin();
+                        ServiceSelector.SelectedIndex = 1;
+                    }
                 }
             }
             catch { }
@@ -135,6 +149,7 @@ namespace HFAuthenticator
             _config.Username = UsernameTextBox.Text;
             _config.Password = Password.Password;
             _config.RequestFrequency = (int)RequestFrequencySlider.Value;
+            _config.LoginType = ServiceSelector.SelectedIndex == 0 ? "HF" : "BZ";
             Utils.ConfigManager.Save(_config);
 
             // If timer is running, update its interval to the new value
@@ -212,7 +227,6 @@ namespace HFAuthenticator
             if (Interlocked.Exchange(ref _autoLoginRunning, 1) == 1) return;
             try
             {
-
                 // Read UI fields safely on UI thread with timeout
                 string ip = null, user = null, pwd = null;
                 try
@@ -244,30 +258,30 @@ namespace HFAuthenticator
 
                 AppendLog("Auto-Login initialized");
 
-                if (string.IsNullOrWhiteSpace(ip) || string.IsNullOrWhiteSpace(user))
+                if (string.IsNullOrWhiteSpace(user))
                 {
-                    AppendLog("Skipped auto-login: missing IP or username");
+                    AppendLog("Skipped auto-login: missing username");
                     return;
                 }
-
-                _loginService = new Login(_httpClient, new Uri($"http://{ip}"));
+                Uri uri = new Uri($"http://{ip}");
+                _loginService.SetConfig(_httpClient, string.IsNullOrWhiteSpace(ip) ? null : uri);
                 try
                 {
                     var result = await _loginService.PasswordLoginAsync(user, pwd, true);
                     if (result != null && result.Success)
                     {
-                        AppendLog("Auto-login success");
+                        AppendLog("Auto-login Success");
                         // save config on successful login
-                        SaveConfig();
+                        Dispatcher.Invoke(() => SaveConfig());
                     }
                     else
                     {
-                        AppendLog("Auto-login failed");
+                        AppendLog($"Auto-login Failed => {result.ResponseBody}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    AppendLog($"Auto-login error: {ex.Message}");
+                    AppendLog($"Auto-login Error: {ex.Message}");
                 }
             }
             finally
@@ -372,7 +386,7 @@ namespace HFAuthenticator
                 HotSpotToggle.IsEnabled = true;
             }
         }
-        
+
         private async void HotSpotToggle_Unchecked(object sender, RoutedEventArgs e)
         {
             try
